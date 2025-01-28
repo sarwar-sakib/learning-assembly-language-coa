@@ -1,0 +1,84 @@
+.MODEL SMALL
+.STACK 100H
+.DATA
+
+MSG1 DB 'TYPE A CHARACTER: $'
+MSG2 DB 0DH,0AH, 'THE ASCII CODE OF $'
+MSG3 DB ' IN BINARY IS: $'
+MSG4 DB 0DH,0AH, 'THE NUMBER OF 1 BITS IS:$'
+
+.CODE
+MAIN PROC
+    
+    MOV AX,@DATA
+    MOV DS,AX
+    
+;PRINT MSG1 
+    LEA DX,MSG1
+    MOV AH,9
+    INT 21H
+    
+;TAKE INPUT
+    MOV AH,1
+    INT 21H
+    
+    
+    XOR BX,BX  ; CLEAR BX
+    MOV BL,AL  ; STORE INPUT IN BL
+    
+;PRINT MSG2 
+    LEA DX,MSG2
+    MOV AH,9
+    INT 21H
+    
+    
+    MOV DL,BL  ; PRINT INPUT VALUE
+    MOV AH, 2
+    INT 21H
+    
+    MOV AH, 9
+    LEA DX, MSG3
+    INT 21H
+    
+    MOV CX, 8  ; SET COUNTER TO 8 FOR 8 BIT BINARY
+    MOV BH, 0  ; INITIALIZE BH TO 0 FOR COUNTING 1'S
+    
+    BINARY:
+    
+    SHL BL, 1  ; SHIFT LEFT BL BY 1, MSB TO CARRY
+    
+    JNC ZERO   ; JUMP IF NO CARRY, CF=0, PRINT 0
+    
+    INC BH     ; ELSE PRINT 1, INC BH TO COUNT 1
+    MOV DL, 31H; 31H = 1, PRINTING 1
+    
+    JMP DISPLAY
+    
+    ZERO:
+    MOV DL, 30H; 30H = 0, PRINTING 0
+    
+    DISPLAY:   ; CALLING INTERRUPT TO PRINT
+    MOV AH, 2
+    INT 21H 
+    
+    LOOP BINARY; LOOP UNTILL 8 BIT OR CX IS 0  
+    
+    
+    ADD BH, '0'; CONVERT TO NUMBER
+    
+    LEA DX, MSG4
+    MOV AH, 9
+    INT 21H
+    
+    MOV DL, BH ; PRINT THE NUMBER
+    MOV AH, 2
+    INT 21H   
+    
+    MOV AH, 4CH
+    INT 21H
+    
+    MAIN ENDP
+END MAIN
+    
+    
+    

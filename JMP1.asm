@@ -1,14 +1,16 @@
 .MODEL SMALL
 .STACK 100H
 .DATA
-MAIN PROC
-    MOV AH,2
-    MOV CX,256
+MAIN PROC  
+    MOV AH,2 
     MOV DL,0
+    
+    MOV CX,256
+    
     PRINT:
+    
     INT 21H
     INC DL
-    DEC CX
     JNZ PRINT
     MOV AH, 4CH
     INT 21H
